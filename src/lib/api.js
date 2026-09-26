@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://api.abcz.workers.dev";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://api.api-store.workers.dev";
 
 export class FitlogApiError extends Error {
   constructor(message, status = 500) {

@@ -68,7 +68,7 @@ fitlog-workout-planner/
 │   │   └── avatars/
 │   └── favicon.ico
 │
-├── .env.local                       # NEXT_PUBLIC_API_URL=https://api.abcz.workers.dev
+├── .env.local                       # NEXT_PUBLIC_API_URL=https://api.api-store.workers.dev
 ├── .eslintrc.json
 ├── .prettierrc
 ├── next.config.js
