@@ -26,7 +26,6 @@ FitLog is a responsive workout discovery and planning application built with Nex
 - Next.js 16 with the App Router
 - React 19 and JavaScript
 - Tailwind CSS 4
-- DaisyUI
 - React Context API
 - React Toastify
 - Lucide React icons
@@ -50,7 +49,7 @@ NEXT_PUBLIC_API_URL=https://api.api-store.workers.dev
 - Workout list: `GET /api/fitlog`
 - Workout details: `GET /api/fitlog/:id`
 
-API responses are validated before rendering and successful requests are revalidated every five minutes.
+API responses are fetched fresh and validated before rendering.
 
 ## Local development
 

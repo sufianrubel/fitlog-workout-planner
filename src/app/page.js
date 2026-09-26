@@ -4,6 +4,8 @@ import Hero from "@/components/workout/Hero";
 import WorkoutGrid from "@/components/workout/WorkoutGrid";
 import { getWorkouts } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const workouts = await getWorkouts();
 

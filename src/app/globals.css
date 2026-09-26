@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "daisyui";
 
 :root {
   /* Brand */
@@ -9,7 +8,6 @@
   /* Backgrounds */
   --background: #090a0d;
   --surface: #15171d;
-  --surface-raised: #1a1d24;
   --surface-soft: #1f232b;
   --surface-alt: #20242e;
 
@@ -24,17 +22,9 @@
 
   /* Workout category accents */
   --accent-green-deep: #1a2312;
-  --accent-green: #1c1f26;
-
-  /* Other colors from the reference */
-  --dark: #000000;
-  --slate: #222630;
-  --success-dark: #0c0d10;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-heading: var(--font-oswald);
 
@@ -43,7 +33,6 @@
 
   --color-background: var(--background);
   --color-surface: var(--surface);
-  --color-surface-raised: var(--surface-raised);
   --color-surface-soft: var(--surface-soft);
   --color-surface-alt: var(--surface-alt);
 
@@ -55,11 +44,6 @@
   --color-border-strong: var(--border-strong);
 
   --color-accent-green-deep: var(--accent-green-deep);
-  --color-accent-green: var(--accent-green);
-
-  --color-dark: var(--dark);
-  --color-slate: var(--slate);
-  --color-success-dark: var(--success-dark);
 }
 
 body {

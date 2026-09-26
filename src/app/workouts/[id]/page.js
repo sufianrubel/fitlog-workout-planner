@@ -5,19 +5,12 @@ import Header from "@/components/layout/Header";
 import WorkoutActions from "@/components/workout/WorkoutActions";
 import { FitlogApiError, getWorkout } from "@/lib/api";
 
-export async function generateMetadata({ params }) {
-  const { id } = await params;
+export const dynamic = "force-dynamic";
 
-  try {
-    const workout = await getWorkout(id);
-    return {
-      title: `${workout.name} | FitLog`,
-      description: workout.description,
-    };
-  } catch {
-    return { title: "Workout | FitLog" };
-  }
-}
+export const metadata = {
+  title: "Workout Details | FitLog",
+  description: "View workout specifications and step-by-step instructions.",
+};
 
 export default async function WorkoutDetailsPage({ params }) {
   const { id } = await params;

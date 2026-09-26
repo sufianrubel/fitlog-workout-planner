@@ -1,8 +1,6 @@
 import "server-only";
-import { cache } from "react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const API_REVALIDATE_SECONDS = 300;
 
 if (!API_BASE_URL) {
   throw new Error("NEXT_PUBLIC_API_URL is not configured.");
@@ -79,7 +77,6 @@ async function request(path) {
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       headers: { Accept: "application/json" },
-      next: { revalidate: API_REVALIDATE_SECONDS },
     });
   } catch {
     throw new FitlogApiError("The workout service could not be reached.", 503);
@@ -121,7 +118,7 @@ export async function getWorkouts() {
   return workouts.map(normalizeWorkout);
 }
 
-export const getWorkout = cache(async function getWorkout(id) {
+export async function getWorkout(id) {
   const payload = await request(`/api/fitlog/${encodeURIComponent(id)}`);
   const workout = getDetailPayload(payload);
 
@@ -130,4 +127,4 @@ export const getWorkout = cache(async function getWorkout(id) {
   }
 
   return normalizeWorkout(workout);
-});
+}

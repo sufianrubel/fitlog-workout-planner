@@ -9,33 +9,26 @@ import {
 } from "react";
 
 const MAX_DAILY_EXERCISES = 5;
-const EMPTY_IDS = [];
+const EMPTY_ARRAY = [];
+const EMPTY_SERIALIZED_ARRAY = "[]";
 const PLAN_KEY = "fitlog-plan";
 const SAVED_KEY = "fitlog-saved";
 const COMPLETED_KEY = "fitlog-completed";
 const STORE_EVENT = "fitlog-store-change";
 
 const PlanContext = createContext(null);
-const cache = new Map();
 
-function readStoredArray(key) {
-  if (typeof window === "undefined") return EMPTY_IDS;
-
-  const rawValue = window.localStorage.getItem(key) ?? "[]";
-  const cachedValue = cache.get(key);
-
-  if (cachedValue?.rawValue === rawValue) return cachedValue.value;
-
+function parseStoredArray(rawValue) {
   try {
     const parsedValue = JSON.parse(rawValue);
-    const value = Array.isArray(parsedValue) ? parsedValue : EMPTY_IDS;
-
-    cache.set(key, { rawValue, value });
-    return value;
+    return Array.isArray(parsedValue) ? parsedValue : EMPTY_ARRAY;
   } catch {
-    cache.set(key, { rawValue, value: EMPTY_IDS });
-    return EMPTY_IDS;
+    return EMPTY_ARRAY;
   }
+}
+
+function getEmptySnapshot() {
+  return EMPTY_SERIALIZED_ARRAY;
 }
 
 function writeStoredArray(key, value) {
@@ -54,8 +47,17 @@ function subscribe(callback) {
 }
 
 function useStoredArray(key) {
-  const getSnapshot = useCallback(() => readStoredArray(key), [key]);
-  return useSyncExternalStore(subscribe, getSnapshot, () => EMPTY_IDS);
+  const getSnapshot = useCallback(
+    () => window.localStorage.getItem(key) ?? EMPTY_SERIALIZED_ARRAY,
+    [key],
+  );
+  const rawValue = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getEmptySnapshot,
+  );
+
+  return useMemo(() => parseStoredArray(rawValue), [rawValue]);
 }
 
 export function PlanProvider({ children }) {
