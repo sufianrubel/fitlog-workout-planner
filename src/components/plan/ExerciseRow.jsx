@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
 import { Check, Clock3, Flame, Star, X } from "lucide-react";
 
 export default function ExerciseRow({
@@ -11,8 +11,6 @@ export default function ExerciseRow({
   onDone,
   onRemove,
 }) {
-  const [showDetails, setShowDetails] = useState(false);
-
   return (
     <article className="rounded-2xl border border-border bg-surface p-4">
       <div className="flex flex-col gap-5 md:flex-row md:items-center">
@@ -51,15 +49,12 @@ export default function ExerciseRow({
         </div>
 
         <div className="flex flex-wrap items-center gap-3 md:justify-end">
-          <button
-            type="button"
-            onClick={() => setShowDetails((currentValue) => !currentValue)}
-            aria-expanded={showDetails}
-            aria-controls={`workout-details-${workout.id}`}
+          <Link
+            href={`/workouts/${workout.id}`}
             className="rounded-full border border-border-strong px-5 py-2.5 text-center text-sm font-medium transition-colors hover:border-foreground-muted hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            {showDetails ? "Hide Details" : "View Details"}
-          </button>
+            View Details
+          </Link>
 
           {showDoneAction && (
             <button
@@ -83,18 +78,6 @@ export default function ExerciseRow({
           </button>
         </div>
       </div>
-
-      {showDetails && (
-        <div
-          id={`workout-details-${workout.id}`}
-          className="mt-4 border-t border-border pt-4 text-sm leading-6 text-foreground-muted"
-        >
-          <p>{workout.description}</p>
-          <p className="mt-2 text-foreground-subtle">
-            {workout.difficulty} · {workout.sets} sets · {workout.reps} reps
-          </p>
-        </div>
-      )}
     </article>
   );
 }

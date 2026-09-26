@@ -13,7 +13,7 @@ export default function NotFound() {
           <p className="mx-auto mt-4 max-w-md text-foreground-subtle">
             That workout doesn&apos;t exist or is no longer available.
           </p>
-          <Link href="/#workout-library" className="mt-7 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-bold uppercase text-background hover:bg-primary-bright focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+          <Link href="/#library" className="mt-7 inline-flex rounded-lg bg-primary px-5 py-3 text-sm font-bold uppercase text-background hover:bg-primary-bright focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
             Browse workouts
           </Link>
         </div>

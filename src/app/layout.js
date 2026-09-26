@@ -1,5 +1,7 @@
 import { Inter, Oswald } from "next/font/google";
+import { ToastContainer } from "react-toastify";
 import { PlanProvider } from "@/context/PlanContext";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const inter = Inter({
@@ -30,7 +32,18 @@ export default function RootLayout({ children }) {
       className={`${inter.variable} ${oswald.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
-        <PlanProvider>{children}</PlanProvider>
+        <PlanProvider>
+          {children}
+          <ToastContainer
+            position="top-right"
+            autoClose={2500}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            theme="dark"
+          />
+        </PlanProvider>
       </body>
     </html>
   );

@@ -1,8 +1,12 @@
 import "server-only";
 import { cache } from "react";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://api.api-store.workers.dev";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_REVALIDATE_SECONDS = 300;
+
+if (!API_BASE_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL is not configured.");
+}
 
 export class FitlogApiError extends Error {
   constructor(message, status = 500) {
@@ -61,26 +65,38 @@ function hasValidDetails(workout) {
   );
 }
 
-async function request(path) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: "no-store",
-    headers: { Accept: "application/json" },
-  });
-
-  if (!response.ok) {
-    throw new FitlogApiError(
-      response.status === 404
-        ? "Workout not found."
-        : "The workout service is unavailable.",
-      response.status,
-    );
-  }
-
+async function parseResponse(response) {
   try {
     return await response.json();
   } catch {
     throw new FitlogApiError("The workout service returned invalid JSON.", 502);
   }
+}
+
+async function request(path) {
+  let response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: { Accept: "application/json" },
+      next: { revalidate: API_REVALIDATE_SECONDS },
+    });
+  } catch {
+    throw new FitlogApiError("The workout service could not be reached.", 503);
+  }
+
+  if (!response.ok) {
+    throw new FitlogApiError(
+      response.status === 404
+        ? "Workout not found."
+        : response.status === 429
+          ? "The workout API has reached its request limit."
+          : "The workout service is unavailable.",
+      response.status,
+    );
+  }
+
+  return parseResponse(response);
 }
 
 function getListPayload(payload) {

@@ -3,13 +3,13 @@ import { Dumbbell } from "lucide-react";
 
 export default function WorkoutGrid({ workouts }) {
   return (
-    <section id="workout-library" aria-labelledby="library-title" className="scroll-mt-6">
+    <section id="library" aria-labelledby="library-title" className="scroll-mt-6">
       <div className="mb-7">
         <h2 id="library-title" className="text-3xl font-bold uppercase sm:text-4xl">
           The Library
         </h2>
         <p className="mt-1 text-sm text-foreground-subtle sm:text-base">
-          Explore exercises for every major muscle group.
+          Twelve lifts covering every major muscle group.
         </p>
       </div>
 

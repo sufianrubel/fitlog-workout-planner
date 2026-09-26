@@ -1,12 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
+import { toast } from "react-toastify";
 import ExerciseRow from "@/components/plan/ExerciseRow";
 import PlanEmptyState from "@/components/plan/PlanEmptyState";
 import PlanSummary from "@/components/plan/PlanSummary";
 import PlanTabs from "@/components/plan/PlanTabs";
 import SortControl from "@/components/plan/SortControl";
 import { usePlan } from "@/context/PlanContext";
+
+function subscribeToHydration() {
+  return () => {};
+}
 
 export default function MyPlanClient({ initialTab = "today" }) {
   const {
@@ -20,7 +25,11 @@ export default function MyPlanClient({ initialTab = "today" }) {
   } = usePlan();
   const [activeTab, setActiveTab] = useState(initialTab);
   const [sortBy, setSortBy] = useState("duration");
-  const [statusMessage, setStatusMessage] = useState("");
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false,
+  );
 
   const activeWorkouts = activeTab === "today" ? plan : saved;
   const sortedWorkouts = useMemo(
@@ -33,14 +42,14 @@ export default function MyPlanClient({ initialTab = "today" }) {
 
   function handleDone(workout) {
     markDone(workout.id);
-    setStatusMessage(`${workout.name} marked as done.`);
+    toast.success(`${workout.name} marked as done.`);
   }
 
   function handleRemove(workout) {
     if (activeTab === "today") removeFromPlan(workout.id);
     else removeFromSaved(workout.id);
 
-    setStatusMessage(
+    toast.info(
       `${workout.name} removed from ${activeTab === "today" ? "today’s plan" : "saved workouts"}.`,
     );
   }
@@ -70,17 +79,19 @@ export default function MyPlanClient({ initialTab = "today" }) {
           <SortControl value={sortBy} onChange={setSortBy} />
         </div>
 
-        <p className="sr-only" aria-live="polite">
-          {statusMessage}
-        </p>
-
         <div
           id={`${activeTab}-panel`}
           role="tabpanel"
           aria-labelledby={`${activeTab}-tab`}
           className="mt-7 space-y-4"
         >
-          {sortedWorkouts.length > 0 ? (
+          {!isHydrated ? (
+            <div className="rounded-2xl border border-border bg-surface px-4 py-16 text-center" role="status">
+              <p className="animate-pulse text-sm font-medium text-foreground-subtle">
+                Loading workouts…
+              </p>
+            </div>
+          ) : sortedWorkouts.length > 0 ? (
             sortedWorkouts.map((workout) => (
               <ExerciseRow
                 key={workout.id}
@@ -92,7 +103,7 @@ export default function MyPlanClient({ initialTab = "today" }) {
               />
             ))
           ) : (
-            <PlanEmptyState activeTab={activeTab} />
+            <PlanEmptyState />
           )}
         </div>
       </section>

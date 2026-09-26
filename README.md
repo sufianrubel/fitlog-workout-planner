@@ -1,73 +1,91 @@
-# Fit Log — Workout Library & Planner
+# FitLog — Workout Library & Planner
 
-Fit Log is a responsive workout discovery and planning app built with Next.js. Browse exercises, read detailed instructions, add workouts to today's plan, and keep favorites in a saved list.
+FitLog is a responsive workout discovery and planning application built with Next.js. It lets users browse a workout library, view detailed exercise instructions, build a five-workout daily plan, and save workouts for later. Plan data is stored locally so it survives page reloads.
 
-> **Project status:** Update this README to match the features you have completed before submitting the assignment.
+## Links
 
-## Live site
+- Repository: [github.com/sufianrubel/fitlog-workout-planner](https://github.com/sufianrubel/fitlog-workout-planner)
+- Live site: Not deployed yet
 
-Add your deployed URL here after deployment.
+## Key features
 
-## Features
-
-- Browse workouts loaded from the assignment API.
-- Open a dedicated details page for each workout.
-- Add workouts to today's plan.
-- Save workouts to revisit later.
-- Review planned and saved workouts on the My Plan page.
-- Receive toast feedback after plan and save actions.
-- Use the site on mobile, tablet, and desktop screens.
-- See helpful loading, empty, and error states.
+- Server-rendered workout library populated from the FitLog API.
+- Dynamic `/workouts/[id]` pages with specifications and instructions.
+- Today’s Plan with a maximum of five workouts.
+- Saved workout collection with live navbar counters.
+- Persistent Plan, Saved, and completion state using `localStorage`.
+- Live exercise, duration, and calorie totals.
+- Sorting by duration, calories, or rating.
+- Mark as Done and removal actions with toast feedback.
+- Responsive layouts for mobile, tablet, and desktop screens.
+- Loading, empty, API error, and custom 404 states.
 
 ## Technologies
 
-- Next.js (App Router)
-- React and JavaScript
-- Tailwind CSS
-- Context API for shared plan state
-- Sonner for toast notifications
-- Lucide React for icons
+- Next.js 16 with the App Router
+- React 19 and JavaScript
+- Tailwind CSS 4
+- DaisyUI
+- React Context API
+- React Toastify
+- Lucide React icons
 
-## Getting started
+## Routes
+
+| Route | Description |
+| --- | --- |
+| `/` | Workout library and hero section |
+| `/workouts/[id]` | Dynamic workout details |
+| `/my-plan` | Today’s Plan, Saved workouts, metrics, and sorting |
+
+## API
+
+FitLog uses the assignment API configured through `NEXT_PUBLIC_API_URL`:
+
+```env
+NEXT_PUBLIC_API_URL=https://api.api-store.workers.dev
+```
+
+- Workout list: `GET /api/fitlog`
+- Workout details: `GET /api/fitlog/:id`
+
+API responses are validated before rendering and successful requests are revalidated every five minutes.
+
+## Local development
 
 ```bash
 git clone https://github.com/sufianrubel/fitlog-workout-planner.git
 cd fitlog-workout-planner
 npm install
+```
+
+Create `.env.local` in the project root:
+
+```env
+NEXT_PUBLIC_API_URL=https://api.api-store.workers.dev
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Available scripts
 
-```bash
-npm run dev    # Start the development server
-npm run build  # Create a production build
-npm run start  # Run the production build
-npm run lint   # Check the code with ESLint
-```
-
-## Routes
-
-| Route | Purpose |
+| Command | Purpose |
 | --- | --- |
-| `/` | Workout library |
-| `/workouts/[id]` | Workout details |
-| `/my-plan` | Today's plan and saved workouts |
+| `npm run dev` | Start the development server |
+| `npm run lint` | Run ESLint |
+| `npm run build` | Create a production build |
+| `npm start` | Run the production build |
 
-## Data source
+## Persistence
 
-Workout information comes from the API supplied in the [assignment requirements](https://github.com/ProgrammingHero1/B14-A6-Fit-Log). Add the exact API endpoint and attribution here once implemented.
-
-## Deployment checklist
-
-- Check the home page and API data.
-- Open a workout details page and reload its URL.
-- Add, save, and remove workouts; check `/my-plan`.
-- Test the layout on a mobile screen.
-- Check for broken images and browser console errors.
+FitLog stores planned, saved, and completed workout data in the browser’s `localStorage`. No account or external database is required.
 
 ## Assignment
 
-Created for Programming Hero Assignment 6 (B14-A6-Fit-Log).
+Created for Programming Hero Assignment 6: B14-A6 Fit Log.

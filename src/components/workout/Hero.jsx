@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Dumbbell } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -23,9 +24,10 @@ export default function Hero() {
             into today&apos;s plan, and watch the week&apos;s work add up.
           </p>
           <Link
-            href="#workout-library"
-            className="mt-7 inline-flex rounded-lg bg-primary px-6 py-3 text-sm font-extrabold uppercase text-background transition-colors hover:bg-primary-bright focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            href="#library"
+            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-extrabold uppercase text-background transition-colors hover:bg-primary-bright focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
           >
+            <Dumbbell aria-hidden="true" className="size-4" />
             Browse workouts
           </Link>
         </div>
