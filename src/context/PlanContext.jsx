@@ -7,7 +7,6 @@ import {
   useMemo,
   useSyncExternalStore,
 } from "react";
-import { workouts } from "@/constants/workouts";
 
 const MAX_DAILY_EXERCISES = 5;
 const EMPTY_IDS = [];
@@ -19,33 +18,28 @@ const STORE_EVENT = "fitlog-store-change";
 const PlanContext = createContext(null);
 const cache = new Map();
 
-function readIds(key) {
+function readStoredArray(key) {
   if (typeof window === "undefined") return EMPTY_IDS;
 
   const rawValue = window.localStorage.getItem(key) ?? "[]";
   const cachedValue = cache.get(key);
 
-  if (cachedValue?.rawValue === rawValue) return cachedValue.ids;
+  if (cachedValue?.rawValue === rawValue) return cachedValue.value;
 
   try {
     const parsedValue = JSON.parse(rawValue);
-    const ids = Array.isArray(parsedValue)
-      ? parsedValue
-          .map((item) => (typeof item === "object" ? item.id : item))
-          .filter((id) => Number.isInteger(Number(id)))
-          .map(Number)
-      : EMPTY_IDS;
+    const value = Array.isArray(parsedValue) ? parsedValue : EMPTY_IDS;
 
-    cache.set(key, { rawValue, ids });
-    return ids;
+    cache.set(key, { rawValue, value });
+    return value;
   } catch {
-    cache.set(key, { rawValue, ids: EMPTY_IDS });
+    cache.set(key, { rawValue, value: EMPTY_IDS });
     return EMPTY_IDS;
   }
 }
 
-function writeIds(key, ids) {
-  window.localStorage.setItem(key, JSON.stringify(ids));
+function writeStoredArray(key, value) {
+  window.localStorage.setItem(key, JSON.stringify(value));
   window.dispatchEvent(new Event(STORE_EVENT));
 }
 
@@ -59,75 +53,80 @@ function subscribe(callback) {
   };
 }
 
-function useStoredIds(key) {
-  const getSnapshot = useCallback(() => readIds(key), [key]);
+function useStoredArray(key) {
+  const getSnapshot = useCallback(() => readStoredArray(key), [key]);
   return useSyncExternalStore(subscribe, getSnapshot, () => EMPTY_IDS);
 }
 
-function resolveWorkouts(ids) {
-  return ids
-    .map((id) => workouts.find((workout) => workout.id === id))
-    .filter(Boolean);
-}
-
 export function PlanProvider({ children }) {
-  const planIds = useStoredIds(PLAN_KEY);
-  const savedIds = useStoredIds(SAVED_KEY);
-  const completedIds = useStoredIds(COMPLETED_KEY);
-
-  const plan = useMemo(() => resolveWorkouts(planIds), [planIds]);
-  const saved = useMemo(() => resolveWorkouts(savedIds), [savedIds]);
+  const storedPlan = useStoredArray(PLAN_KEY);
+  const storedSaved = useStoredArray(SAVED_KEY);
+  const storedCompletedIds = useStoredArray(COMPLETED_KEY);
+  const plan = useMemo(
+    () => storedPlan.filter((item) => item && typeof item === "object"),
+    [storedPlan],
+  );
+  const saved = useMemo(
+    () => storedSaved.filter((item) => item && typeof item === "object"),
+    [storedSaved],
+  );
+  const completedIds = useMemo(
+    () => storedCompletedIds.map(Number).filter(Number.isInteger),
+    [storedCompletedIds],
+  );
 
   const addToPlan = useCallback(
-    (workoutId) => {
-      if (planIds.includes(workoutId)) return { ok: false, reason: "duplicate" };
-      if (planIds.length >= MAX_DAILY_EXERCISES) {
+    (workout) => {
+      if (plan.some((item) => item.id === workout.id)) {
+        return { ok: false, reason: "duplicate" };
+      }
+      if (plan.length >= MAX_DAILY_EXERCISES) {
         return { ok: false, reason: "limit" };
       }
 
-      writeIds(PLAN_KEY, [...planIds, workoutId]);
+      writeStoredArray(PLAN_KEY, [...plan, workout]);
       return { ok: true };
     },
-    [planIds],
+    [plan],
   );
 
   const saveWorkout = useCallback(
-    (workoutId) => {
-      if (savedIds.includes(workoutId)) return false;
-      writeIds(SAVED_KEY, [...savedIds, workoutId]);
+    (workout) => {
+      if (saved.some((item) => item.id === workout.id)) return false;
+      writeStoredArray(SAVED_KEY, [...saved, workout]);
       return true;
     },
-    [savedIds],
+    [saved],
   );
 
   const removeFromPlan = useCallback(
     (workoutId) => {
-      writeIds(
+      writeStoredArray(
         PLAN_KEY,
-        planIds.filter((id) => id !== workoutId),
+        plan.filter((workout) => workout.id !== workoutId),
       );
-      writeIds(
+      writeStoredArray(
         COMPLETED_KEY,
         completedIds.filter((id) => id !== workoutId),
       );
     },
-    [completedIds, planIds],
+    [completedIds, plan],
   );
 
   const removeFromSaved = useCallback(
     (workoutId) => {
-      writeIds(
+      writeStoredArray(
         SAVED_KEY,
-        savedIds.filter((id) => id !== workoutId),
+        saved.filter((workout) => workout.id !== workoutId),
       );
     },
-    [savedIds],
+    [saved],
   );
 
   const markDone = useCallback(
     (workoutId) => {
       if (!completedIds.includes(workoutId)) {
-        writeIds(COMPLETED_KEY, [...completedIds, workoutId]);
+        writeStoredArray(COMPLETED_KEY, [...completedIds, workoutId]);
       }
     },
     [completedIds],

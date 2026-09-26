@@ -2,9 +2,11 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Hero from "@/components/workout/Hero";
 import WorkoutGrid from "@/components/workout/WorkoutGrid";
-import { workouts } from "@/constants/workouts";
+import { getWorkouts } from "@/lib/api";
 
-export default function Home() {
+export default async function Home() {
+  const workouts = await getWorkouts();
+
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Header />
