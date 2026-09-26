@@ -17,6 +17,9 @@ export const metadata = {
   title: "Fit Log | Workout Planner",
   description:
     "Discover workouts, explore exercise details, and build your daily workout plan.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
