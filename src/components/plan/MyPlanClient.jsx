@@ -7,7 +7,9 @@ import PlanEmptyState from "@/components/plan/PlanEmptyState";
 import PlanSummary from "@/components/plan/PlanSummary";
 import PlanTabs from "@/components/plan/PlanTabs";
 import SortControl from "@/components/plan/SortControl";
+import WorkoutSearch from "@/components/workout/WorkoutSearch";
 import { usePlan } from "@/context/PlanContext";
+import { matchesWorkoutSearch } from "@/lib/utils";
 
 function subscribeToHydration() {
   return () => {};
@@ -25,6 +27,7 @@ export default function MyPlanClient({ initialTab = "today" }) {
   } = usePlan();
   const [activeTab, setActiveTab] = useState(initialTab);
   const [sortBy, setSortBy] = useState("duration");
+  const [query, setQuery] = useState("");
   const isHydrated = useSyncExternalStore(
     subscribeToHydration,
     () => true,
@@ -34,10 +37,12 @@ export default function MyPlanClient({ initialTab = "today" }) {
   const activeWorkouts = activeTab === "today" ? plan : saved;
   const sortedWorkouts = useMemo(
     () =>
-      [...activeWorkouts].sort((a, b) =>
-        sortBy === "rating" ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy],
-      ),
-    [activeWorkouts, sortBy],
+      activeWorkouts
+        .filter((workout) => matchesWorkoutSearch(workout, query))
+        .sort((a, b) =>
+          sortBy === "rating" ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy],
+        ),
+    [activeWorkouts, query, sortBy],
   );
 
   function handleDone(workout) {
@@ -74,9 +79,17 @@ export default function MyPlanClient({ initialTab = "today" }) {
       </section>
 
       <section className="mt-10" aria-label="Plan exercises">
-        <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-start justify-between gap-5 lg:flex-row lg:items-center">
           <PlanTabs activeTab={activeTab} onChange={setActiveTab} />
-          <SortControl value={sortBy} onChange={setSortBy} />
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
+            <WorkoutSearch
+              id="plan-search"
+              value={query}
+              onChange={setQuery}
+              placeholder="Search by name or tag"
+            />
+            <SortControl value={sortBy} onChange={setSortBy} />
+          </div>
         </div>
 
         <div
@@ -102,6 +115,13 @@ export default function MyPlanClient({ initialTab = "today" }) {
                 onRemove={() => handleRemove(workout)}
               />
             ))
+          ) : activeWorkouts.length > 0 ? (
+            <div className="rounded-2xl border border-dashed border-border bg-surface px-4 py-14 text-center">
+              <h3 className="text-2xl font-bold uppercase">No matching workouts</h3>
+              <p className="mt-2 text-sm text-foreground-subtle">
+                Try a different workout name or muscle-group tag.
+              </p>
+            </div>
           ) : (
             <PlanEmptyState />
           )}

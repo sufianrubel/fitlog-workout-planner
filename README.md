@@ -16,6 +16,7 @@ FitLog is a responsive workout discovery and planning application built with Nex
 - Persistent Plan, Saved, and completion state using `localStorage`.
 - Live exercise, duration, and calorie totals.
 - Sorting by duration, calories, or rating.
+- Search by workout name or muscle-group tag.
 - Mark as Done and removal actions with toast feedback.
 - Responsive layouts for mobile, tablet, and desktop screens.
 - Loading, empty, API error, and custom 404 states.
