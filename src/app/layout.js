@@ -1,4 +1,5 @@
 import { Inter, Oswald } from "next/font/google";
+import { PlanProvider } from "@/context/PlanContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -29,7 +30,7 @@ export default function RootLayout({ children }) {
       className={`${inter.variable} ${oswald.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
-        {children}
+        <PlanProvider>{children}</PlanProvider>
       </body>
     </html>
   );

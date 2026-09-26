@@ -1,12 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { usePlan } from "@/context/PlanContext";
 
 const navigation = [
-  { label: "Workouts", href: "#workout-library", active: true },
+  { label: "Workouts", href: "/#workout-library", path: "/" },
   { label: "My Plan", href: "/my-plan" },
 ];
 
 export default function Header() {
+  const pathname = usePathname();
+  const { plan, saved } = usePlan();
+
   return (
     <header className="border-b border-border bg-background">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4">
@@ -27,9 +34,9 @@ export default function Header() {
               <li key={item.label}>
                 <Link
                   href={item.href}
-                  aria-current={item.active ? "page" : undefined}
+                  aria-current={pathname === (item.path ?? item.href) ? "page" : undefined}
                   className={`block rounded-full px-4 py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                    item.active
+                    pathname === (item.path ?? item.href)
                       ? "bg-accent-green-deep text-primary"
                       : "hover:bg-surface hover:text-foreground"
                   }`}
@@ -48,16 +55,16 @@ export default function Header() {
           >
             Plan
             <span className="flex size-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-background">
-              0
+              {plan.length}
             </span>
           </Link>
           <Link
-            href="/my-plan#saved"
+            href="/my-plan?tab=saved"
             className="flex items-center gap-2 rounded-md hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
           >
             Saved
             <span className="flex size-5 items-center justify-center rounded-full border border-border text-xs">
-              0
+              {saved.length}
             </span>
           </Link>
         </div>
